@@ -26,14 +26,16 @@
     var player_element = $(player[0]);
 
     // holds the initial sound file
-    var original_sound;
-    // holds the current sound file
-    var sound_file;
+    var original_sound = player.data().jPlayer.status.media.mp3;
 
     // retrieves the customized audio file from a cookie
     var get_preferred_file = function () {
         return $.cookie("notify_sound");
     };
+    
+    // holds the current sound file
+    var sound_file = get_preferred_file();
+    
     var set_preferred_file = function (file) {
         sound_file = file;
         
@@ -148,11 +150,7 @@
                      "you can also choose a preset from below. After " +
                      "selecting a preset, it will be played immediately.");
         $("<br>").appendTo(presets);
-        
-		if (!original_sound) {
-			original_sound = player.data().jPlayer.status.media.mp3;
-		}
-        
+                
         for (var i=0; i<preset_urls.length; i++) {
             var url = preset_urls[i][0];
 
@@ -184,4 +182,9 @@
 
     // insert the button next to "set audio notification level"
     $("#sound").after(customize_button);
+    setTimeout(function () {
+        if (original_sound != sound_file) {
+            player.jPlayer("setMedia", {"mp3": sound_file});
+        }
+    }, 200);
 });
