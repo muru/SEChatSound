@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           SE Chat custom notification sound
 // @author         Lekensteyn lekensteyn@gmail.com
-// @version        1.0.0.0
+// @version        1.0.0.1
 // @namespace      lekensteyn@gmail.com
 // @description    Customize the notification sound played in the StackExchange chat
 // @include        http://chat.stackexchange.com/*
@@ -59,7 +59,7 @@
 
         var preferred_file = get_preferred_file();
         // if we have a custom sound file, mark it for use
-        console.log(preferred_file, mp3_file);
+        
         if (preferred_file && mp3_file != preferred_file) {
             player.jPlayer("setMedia", {"mp3": preferred_file});
         }
@@ -135,20 +135,24 @@
 
         // URLs found with cURL magic
         var preset_urls = [
-            "//cdn-chat.sstatic.net/chat/se.mp3",
-            "//cdn-chat.sstatic.net/chat/sf.mp3",
-            "//cdn-chat.sstatic.net/chat/so.mp3",
-            "//cdn-chat.sstatic.net/chat/su.mp3",
-            "//cdn-chat.sstatic.net/chat/ubuntu.mp3"
+            ["//cdn-chat.sstatic.net/chat/se.mp3", "SE"],
+            ["//cdn-chat.sstatic.net/chat/sf.mp3", "SF"],
+            ["//cdn-chat.sstatic.net/chat/so.mp3", "SO"],
+            ["//cdn-chat.sstatic.net/chat/su.mp3", "SU"],
+            ["//cdn-chat.sstatic.net/chat/ubuntu.mp3", "AU"]
         ];
         var presets = $("<div>").css("margin-top", "5px").appendTo(popup);
         presets.text("Instead of entering a URL, " +
                      "you can also choose a preset from below. After " +
                      "selecting a preset, it will be played immediately.");
         $("<br>").appendTo(presets);
+        
+		if (!original_sound) {
+			original_sound = player.data().jPlayer.status.media.mp3;
+		}
 
         for (var i=0; i<preset_urls.length; i++) {
-            var url = preset_urls[i];
+            var url = preset_urls[i][0];
 
             // create a butto for choosing presets
             var button = $("<button>")
@@ -169,7 +173,7 @@
             var button_prefix = button_prefixes.length
                     ? " (" + button_prefixes.join(", ") + ")"
                     : "";
-            button.text((i+1) + button_prefix)
+            button.text(preset_urls[i][1] + button_prefix)
         }
 
         event.preventDefault();
