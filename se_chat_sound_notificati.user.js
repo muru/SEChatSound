@@ -35,6 +35,8 @@
         return $.cookie("notify_sound");
     };
     var set_preferred_file = function (file) {
+        sound_file = file;
+        
         var save_data = file;
         // do not waste space on saving the default sound
         if (save_data == original_sound) {
@@ -150,7 +152,7 @@
 		if (!original_sound) {
 			original_sound = player.data().jPlayer.status.media.mp3;
 		}
-
+        
         for (var i=0; i<preset_urls.length; i++) {
             var url = preset_urls[i][0];
 
