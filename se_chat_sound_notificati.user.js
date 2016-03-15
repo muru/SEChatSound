@@ -46,7 +46,7 @@
             expires: 90
         });
         // and use the sound file
-        player.jPlayer("setFile", file);
+        player.jPlayer("setMedia", {"mp3": file});
     };
 
     // modifies the audio file if necessary
@@ -59,13 +59,14 @@
 
         var preferred_file = get_preferred_file();
         // if we have a custom sound file, mark it for use
+        console.log(preferred_file, mp3_file);
         if (preferred_file && mp3_file != preferred_file) {
-            player.jPlayer("setFile", preferred_file);
+            player.jPlayer("setMedia", {"mp3": preferred_file});
         }
     };
 
     // catch requests to modify the audio file
-    player_element.bind("jPlayer.setFile", set_custom_file);
+    player_element.bind("jPlayer.setMedia", set_custom_file);
 
     var customize_button = $("<div>");
 
@@ -134,10 +135,11 @@
 
         // URLs found with cURL magic
         var preset_urls = [
-            "http://or.sstatic.net/chat/se.mp3",
-            "http://or.sstatic.net/chat/sf.mp3",
-            "http://or.sstatic.net/chat/so.mp3",
-            "http://or.sstatic.net/chat/su.mp3"
+            "//cdn-chat.sstatic.net/chat/se.mp3",
+            "//cdn-chat.sstatic.net/chat/sf.mp3",
+            "//cdn-chat.sstatic.net/chat/so.mp3",
+            "//cdn-chat.sstatic.net/chat/su.mp3",
+            "//cdn-chat.sstatic.net/chat/ubuntu.mp3"
         ];
         var presets = $("<div>").css("margin-top", "5px").appendTo(popup);
         presets.text("Instead of entering a URL, " +
