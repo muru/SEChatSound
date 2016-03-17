@@ -5,6 +5,8 @@
 // @namespace      lekensteyn@gmail.com
 // @description    Customize the notification sound played in the StackExchange chat
 // @include        http://chat.stackexchange.com/*
+// @include        http://chat.meta.stackexchange.com/*
+// @include        http://chat.stackoverflow.com/*
 // @license        MIT/X11
 // @website        http://stackapps.com/q/2479/6969
 // ==/UserScript==
@@ -15,12 +17,12 @@
     // insert a script element...
     script.appendChild(
         // with a function which is called on document ready
-        document.createTextNode("$(" + func.toString() + ")")
+        document.createTextNode("$(" + func + ")")
     );
     // run the script after other scripts
     document.body.appendChild(script);
 })(function () {
-    
+
     // an element containing the audio player
     var player = $("#jplayer");
     var player_element = $(player[0]);
@@ -32,13 +34,13 @@
     var get_preferred_file = function () {
         return $.cookie("notify_sound");
     };
-    
+
     // holds the current sound file
     var sound_file = get_preferred_file();
-    
+
     var set_preferred_file = function (file) {
         sound_file = file;
-        
+
         var save_data = file;
         // do not waste space on saving the default sound
         if (save_data == original_sound) {
@@ -63,7 +65,7 @@
 
         var preferred_file = get_preferred_file();
         // if we have a custom sound file, mark it for use
-        
+
         if (preferred_file && mp3_file != preferred_file) {
             player.jPlayer("setMedia", {"mp3": preferred_file});
         }
@@ -150,7 +152,7 @@
                      "you can also choose a preset from below. After " +
                      "selecting a preset, it will be played immediately.");
         $("<br>").appendTo(presets);
-                
+
         for (var i=0; i<preset_urls.length; i++) {
             var url = preset_urls[i][0];
 
@@ -169,7 +171,7 @@
             if (url == original_sound) {
                 button_prefixes.push("original");
             }
-            
+
             var button_prefix = button_prefixes.length
                     ? " (" + button_prefixes.join(", ") + ")"
                     : "";
