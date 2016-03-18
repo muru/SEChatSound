@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           SE Chat custom notification sound
 // @author         Lekensteyn lekensteyn@gmail.com
-// @version        1.0.0.1
+// @version        1.0.0.2
 // @namespace      lekensteyn@gmail.com
 // @description    Customize the notification sound played in the StackExchange chat
 // @include        http://chat.stackexchange.com/*
@@ -9,6 +9,7 @@
 // @include        http://chat.stackoverflow.com/*
 // @license        MIT/X11
 // @website        http://stackapps.com/q/2479/6969
+// @grant          none
 // ==/UserScript==
 
 (function (func) {
@@ -28,7 +29,7 @@
     var player_element = $(player[0]);
 
     // holds the initial sound file
-    var original_sound = player.data().jPlayer.status.media.mp3;
+    var original_sound;
 
     // retrieves the customized audio file from a cookie
     var get_preferred_file = function () {
@@ -142,11 +143,26 @@
         // URLs found with cURL magic
         var preset_urls = [
             ["//cdn-chat.sstatic.net/chat/se.mp3", "SE"],
-            ["//cdn-chat.sstatic.net/chat/sf.mp3", "SF"],
             ["//cdn-chat.sstatic.net/chat/so.mp3", "SO"],
+            ["//cdn-chat.sstatic.net/chat/meta2.mp3", "MSE"],
+            ["//cdn-chat.sstatic.net/chat/sf.mp3", "SF"],
             ["//cdn-chat.sstatic.net/chat/su.mp3", "SU"],
             ["//cdn-chat.sstatic.net/chat/ubuntu.mp3", "AU"]
         ];
+
+		if (!original_sound) {
+			switch (window.location.hostname) {
+				case "chat.stackexchange.com":
+					original_sound = preset_urls[0][0];
+                    break;
+				case "chat.stackoverflow.com":
+					original_sound = preset_urls[1][0];
+                    break;
+				case "chat.meta.stackexchange.com":
+					original_sound = preset_urls[2][0];
+                    break;
+			}
+		}
         var presets = $("<div>").css("margin-top", "5px").appendTo(popup);
         presets.text("Instead of entering a URL, " +
                      "you can also choose a preset from below. After " +
