@@ -1,15 +1,14 @@
 // ==UserScript==
 // @name           SE Chat custom notification sound
 // @author         Lekensteyn lekensteyn@gmail.com
-// @version        1.0.0.3
+// @version        1.0.0.4
 // @namespace      lekensteyn@gmail.com
 // @description    Customize the notification sound played in the StackExchange chat
-// @include        http://chat.stackexchange.com/*
-// @include        https://chat.stackexchange.com/*
-// @include        http://chat.meta.stackexchange.com/*
-// @include        http://chat.stackoverflow.com/*
+// @include        *://chat.stackexchange.com/*
+// @include        *://chat.meta.stackexchange.com/*
+// @include        *://chat.stackoverflow.com/*
 // @license        MIT/X11
-// @website        http://stackapps.com/q/2479/6969
+// @website        https://stackapps.com/q/2479/6969
 // @grant          none
 // ==/UserScript==
 
