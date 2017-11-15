@@ -147,7 +147,8 @@
             ["//cdn-chat.sstatic.net/chat/meta2.mp3", "MSE"],
             ["//cdn-chat.sstatic.net/chat/sf.mp3", "SF"],
             ["//cdn-chat.sstatic.net/chat/su.mp3", "SU"],
-            ["//cdn-chat.sstatic.net/chat/ubuntu.mp3", "AU"]
+            ["//cdn-chat.sstatic.net/chat/ubuntu.mp3", "AU"],
+            ["//cdn-chat.sstatic.net/chat/bonfire.mp3", "DEV"]
         ];
 
 		if (!original_sound) {
