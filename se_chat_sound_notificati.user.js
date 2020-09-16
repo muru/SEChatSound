@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           SE Chat custom notification sound
 // @author         Lekensteyn lekensteyn@gmail.com
-// @version        1.0.0.4
+// @version        1.0.0.5
 // @namespace      lekensteyn@gmail.com
 // @description    Customize the notification sound played in the StackExchange chat
 // @include        *://chat.stackexchange.com/*
@@ -24,37 +24,66 @@
     document.body.appendChild(script);
 })(function () {
 
+    // URLs found with cURL magic
+    var preset_urls = [
+        ["//cdn-chat.sstatic.net/chat/se.mp3", "SE"],
+        ["//cdn-chat.sstatic.net/chat/so.mp3", "SO"],
+        ["//cdn-chat.sstatic.net/chat/meta2.mp3", "MSE"],
+        ["//cdn-chat.sstatic.net/chat/sf.mp3", "SF"],
+        ["//cdn-chat.sstatic.net/chat/su.mp3", "SU"],
+        ["//cdn-chat.sstatic.net/chat/ubuntu.mp3", "AU"],
+        ["//cdn-chat.sstatic.net/chat/bonfire.mp3", "DEV"]
+    ];
+
+    // holds the initial sound file
+    var original_sound;
+    switch (window.location.hostname) {
+        case "chat.stackexchange.com":
+            original_sound = preset_urls[0][0];
+            break;
+        case "chat.stackoverflow.com":
+            original_sound = preset_urls[1][0];
+            break;
+        case "chat.meta.stackexchange.com":
+            original_sound = preset_urls[2][0];
+            break;
+    }
+
+    var countCustomURLs = 0;
+
+    //Code for localStorage was copied from one of SOCVR's scripts, or from one
+    // of the other places Makyen uses it, by Makyen, who is one of the authors.
+    // It was probably then modified to fit the general style of this script.
+    var lsPrefix = 'custom-notification-sound-';
+    var getStorage = function(key) {
+        return localStorage[lsPrefix + key];
+    }
+
+    var setStorage = function(key, val) {
+        localStorage[lsPrefix + key] = val;
+    }
+
+    // retrieves the customized audio file from a cookie
+    var get_preferred_file = function () {
+        return getStorage("notify_sound") || original_sound;
+    };
+
+    var set_preferred_file = function (file) {
+        sound_file = file;
+        // save the sound file
+        setStorage("notify_sound", file);
+        // and use the sound file
+        if (player.jPlayer) {
+            player.jPlayer("setMedia", {"mp3": file});
+        }
+    };
+
     // an element containing the audio player
     var player = $("#jplayer");
     var player_element = $(player[0]);
 
-    // holds the initial sound file
-    var original_sound;
-
-    // retrieves the customized audio file from a cookie
-    var get_preferred_file = function () {
-        return $.cookie("notify_sound");
-    };
-
     // holds the current sound file
     var sound_file = get_preferred_file();
-
-    var set_preferred_file = function (file) {
-        sound_file = file;
-
-        var save_data = file;
-        // do not waste space on saving the default sound
-        if (save_data == original_sound) {
-            save_data = "";
-        }
-        // save the sound file
-        $.cookie("notify_sound", save_data, {
-            path: "/",
-            expires: 90
-        });
-        // and use the sound file
-        player.jPlayer("setMedia", {"mp3": file});
-    };
 
     // modifies the audio file if necessary
     var set_custom_file = function (event, mp3_file, /*unused*/ ogg_file) {
@@ -67,7 +96,7 @@
         var preferred_file = get_preferred_file();
         // if we have a custom sound file, mark it for use
 
-        if (preferred_file && mp3_file != preferred_file) {
+        if (preferred_file && mp3_file != preferred_file && player.jPlayer) {
             player.jPlayer("setMedia", {"mp3": preferred_file});
         }
     };
@@ -123,7 +152,9 @@
         };
         var save_and_play_sound = function () {
             save_url();
-            player.jPlayer("play");
+            if (player.jPlayer) {
+                player.jPlayer("play");
+            }
         };
         // provides a function for setting a URL
         var url_chooser = function (url) {
@@ -140,30 +171,6 @@
         $("<button>").text("Save and play")
             .click(save_and_play_sound).appendTo(popup);
 
-        // URLs found with cURL magic
-        var preset_urls = [
-            ["//cdn-chat.sstatic.net/chat/se.mp3", "SE"],
-            ["//cdn-chat.sstatic.net/chat/so.mp3", "SO"],
-            ["//cdn-chat.sstatic.net/chat/meta2.mp3", "MSE"],
-            ["//cdn-chat.sstatic.net/chat/sf.mp3", "SF"],
-            ["//cdn-chat.sstatic.net/chat/su.mp3", "SU"],
-            ["//cdn-chat.sstatic.net/chat/ubuntu.mp3", "AU"],
-            ["//cdn-chat.sstatic.net/chat/bonfire.mp3", "DEV"]
-        ];
-
-		if (!original_sound) {
-			switch (window.location.hostname) {
-				case "chat.stackexchange.com":
-					original_sound = preset_urls[0][0];
-                    break;
-				case "chat.stackoverflow.com":
-					original_sound = preset_urls[1][0];
-                    break;
-				case "chat.meta.stackexchange.com":
-					original_sound = preset_urls[2][0];
-                    break;
-			}
-		}
         var presets = $("<div>").css("margin-top", "5px").appendTo(popup);
         presets.text("Instead of entering a URL, " +
                      "you can also choose a preset from below. After " +
@@ -202,8 +209,8 @@
     // insert the button next to "set audio notification level"
     $("#sound").after(customize_button);
     setTimeout(function () {
-        if (original_sound != sound_file) {
-            player.jPlayer("setMedia", {"mp3": sound_file});
+        if (original_sound != sound_file && player.jPlayer) {
+            player.jPlayer("setMedia", {"mp3": sound_file || original_sound});
         }
     }, 200);
 });
